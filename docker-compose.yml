@@ -1,0 +1,24 @@
+services:
+  backend:
+    build:
+      context: ./dock/backend
+    container_name: fma-backend
+    environment:
+      - PORT=8080
+      - CORS_ORIGIN=${CORS_ORIGIN:-*}
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./dock/frontend
+      args:
+        # Baked into the static bundle at build time
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
+    container_name: fma-frontend
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
